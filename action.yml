@@ -1,0 +1,17 @@
+---
+name: Notify Rocket.Chat
+description: Notify Rocket.Chat about completed jobs
+inputs:
+  webhook:
+    description: 'The Rocket.Chat incoming webhook URL'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Send notify
+      shell: bash
+      run: "${GITHUB_ACTION_PATH}/notify.sh"
+      env:
+        JOB_STATUS: ${{ job.status }}
+        ROCKETCHAT_WEBHOOK: ${{ inputs.webhook }}
