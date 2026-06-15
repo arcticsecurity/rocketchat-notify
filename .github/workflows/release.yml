@@ -1,0 +1,42 @@
+---
+name: Release
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+      - name: Detect version change
+        id: version-check
+        run: |
+          . ./VERSION
+
+          if git rev-parse "v${VERSION}" > /dev/null 2>&1 ; then
+              NEW_VERSION=false
+          else
+              NEW_VERSION=true
+          fi
+
+          {
+              echo "VERSION=${VERSION}"
+              echo "NEW_VERSION=${NEW_VERSION}"
+          } >> "$GITHUB_OUTPUT"
+      - name: Create GitHub release
+        if: steps.version-check.outputs.NEW_VERSION == 'true'
+        run: gh release create "$TAG" --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ steps.version-check.outputs.VERSION }}
