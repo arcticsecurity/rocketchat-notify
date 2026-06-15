@@ -1,0 +1,5 @@
+---
+changelog:
+  render:
+    item: "* $title (#$number)"
+    compact: true
