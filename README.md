@@ -21,7 +21,7 @@ For accurate status reporting, ensure you use `if: always()` so the notification
 ```yaml
 - name: Notify Rocket.Chat
   if: always()
-  uses: your-org-or-username/your-repo-name@v1
+  uses: arcticsecurity/rocketchat-notify@v1
   with:
     webhook: ${{ secrets.ROCKETCHAT_WEBHOOK }}
 ```
@@ -47,7 +47,7 @@ jobs:
 
       - name: Send Rocket.Chat Notification
         if: always()
-        uses: your-org-or-username/your-repo-name@v1
+        uses: arcticsecurity/rocketchat-notify@v1
         with:
           webhook: ${{ secrets.ROCKETCHAT_WEBHOOK }}
 ```
