@@ -22,14 +22,12 @@ jobs:
       - name: Detect version change
         id: version-check
         run: |
-          . ./VERSION
-
+          VERSION="$(sed -n 's/^VERSION=\([0-9\.]\+\)$/\1/p' VERSION)"
           if git rev-parse "v${VERSION}" > /dev/null 2>&1 ; then
               NEW_VERSION=false
           else
               NEW_VERSION=true
           fi
-
           {
               echo "VERSION=${VERSION}"
               echo "NEW_VERSION=${NEW_VERSION}"
