@@ -28,7 +28,43 @@ case "$JOB_STATUS" in
         ;;
 esac
 
-cat <<EOF | post_message
+if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+    cat <<EOF | post_message
+{
+  "text": "[${_icon} ${JOB_STATUS}]: ${GITHUB_WORKFLOW} in ${GITHUB_REPOSITORY}",
+  "attachments": [
+    {
+      "collapsed": true,
+      "color": "$_color",
+      "title": "trigger: Automated Schedule (Cron)",
+      "fields": [
+        {
+          "short": true,
+          "title": "ref",
+          "value": "[${GITHUB_REF}](${_repourl}/tree/${GITHUB_REF})"
+        },
+        {
+          "short": true,
+          "title": "workflow",
+	  "value": "[${GITHUB_WORKFLOW}](${_repourl}/blobs/${GITHUB_REF_NAME}/${GITHUB_WORKFLOW_REF})"
+        },
+        {
+          "short": true,
+          "title": "repository",
+          "value": "[${GITHUB_REPOSITORY}](${_repourl})"
+        },
+        {
+          "short": true,
+          "title": "run",
+          "value": "[${GITHUB_RUN_ID}](${_repourl}/actions/runs/${GITHUB_RUN_ID})"
+        }
+      ]
+    }
+  ]
+}
+EOF
+else
+    cat <<EOF | post_message
 {
   "text": "[${_icon} ${JOB_STATUS}]: ${GITHUB_REPOSITORY}/${GITHUB_REF_NAME}",
   "attachments": [
@@ -62,3 +98,4 @@ cat <<EOF | post_message
   ]
 }
 EOF
+fi
