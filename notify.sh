@@ -46,7 +46,7 @@ if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
         {
           "short": true,
           "title": "workflow",
-	  "value": "[${GITHUB_WORKFLOW}](${_repourl}/blobs/${GITHUB_REF_NAME}/${GITHUB_WORKFLOW_REF})"
+          "value": "[${GITHUB_WORKFLOW}](${_repourl}/blobs/${GITHUB_REF_NAME}/${GITHUB_WORKFLOW_REF})"
         },
         {
           "short": true,
