@@ -3,6 +3,15 @@
 set -eu
 umask 077
 
+post_message() {
+    _config="$(mktemp ${RUNNER_TEMP:+-p "$RUNNER_TEMP"})"
+    trap 'rm -f -- "$_config"' EXIT
+    cat <<EOF > "$_config"
+url = "${ROCKETCHAT_WEBHOOK}"
+EOF
+    curl -sSf -X POST -H "Content-Type: application/json" -d @- --config "$_config"
+}
+
 _repourl="https://github.com/${GITHUB_REPOSITORY}"
 case "$JOB_STATUS" in
     success)
@@ -19,15 +28,7 @@ case "$JOB_STATUS" in
         ;;
 esac
 
-# put url in config so it doesn't show up in process list
-_config="$(mktemp -p "$RUNNER_TEMP")"
-trap 'rm -f -- "$_config"' EXIT
-cat <<EOF > "$_config"
-url = "${ROCKETCHAT_WEBHOOK}"
-EOF
-
-cat <<EOF | curl -sSf -X POST -H "Content-Type: application/json" \
-                -d @- --config "$_config"
+cat <<EOF | post_message
 {
   "text": "[${_icon} ${JOB_STATUS}]: ${GITHUB_REPOSITORY}/${GITHUB_REF_NAME}",
   "attachments": [
